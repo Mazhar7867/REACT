@@ -1,0 +1,168 @@
+   // app.js
+
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import AppLayout from './Navlinks/AppLayout'
+import Home from './Navlinks/Home';
+import About from './Navlinks/About';
+import Contact from './Navlinks/Contact';
+import HomeDataContext from './Context/HomeDataContext';
+import { useState } from 'react';
+
+const App=()=> {
+
+  const [Name , setName]= useState("abcrere")
+  const myRouter = createBrowserRouter([
+  {
+    path:"/my-app",
+    element: <AppLayout/>,
+    children:[
+      {
+        path:"home",
+        element:<Home/>
+      },
+      {
+        path:"about",
+        element:<About/>
+      },
+      {
+        path:"contact",
+        element:<Contact/>
+      }
+    ]
+  }
+]);
+  return (
+    <div>
+     <HomeDataContext.Provider value={{Name,setName }}>
+  <RouterProvider router={myRouter}/>
+     </HomeDataContext.Provider>
+
+    </div>
+  );
+}
+
+export default App
+
+
+
+
+// context-api
+
+import { createContext } from "react";
+const HomeDataContext = createContext(null);
+export default HomeDataContext
+
+
+
+
+
+
+
+
+
+import {  NavLink, Outlet } from "react-router-dom"
+const AppLayout=()=>{
+    const Navlinks =[
+        {
+          label:"Home",
+          path:"home"  
+        },
+        {
+          label:"About",
+          path:"about" 
+        },
+        {
+          label:"Contact",
+          path:"contact"
+        },
+    ]
+    console.log(NavLink);
+    
+    return(
+        <div className="h-screen w-screen ">
+        <div className="p-4 bg-black text-white justify-center flex gap-3">
+        {
+        Navlinks.map((navitems)=>{
+            
+            return(
+            
+                
+                <NavLink
+                key={navitems.label}
+                to={navitems.path}
+                 className={({isActive}) => 
+                 (isActive ?"text-rose-500": "")}>
+                    {navitems.label}
+                    
+                </NavLink>
+            )
+        })
+        }   
+        
+           
+        </div>
+        <Outlet/>
+        </div>
+    )
+}
+export default AppLayout
+
+
+
+
+import React, { useState } from 'react'
+import ChildComponent from '../ChildComponent'
+const Home = () => {
+
+
+  return (
+    <>
+      <h1>Home</h1>
+      <ChildComponent/>
+    </>
+  )
+}
+
+export default Home
+
+
+
+
+
+import React, { useContext } from 'react'
+import GrandChild from "./GrandChild"
+import HomeDataContext from './Context/HomeDataContext'
+const ChildComponent = () => {
+  const {Name ,setName} = useContext(HomeDataContext)
+  return (
+    <>
+      <h1>ChildComponent</h1>
+      <input type="text" value={Name} onChange={(e)=> setName(e.target.value)}/>
+    
+      <GrandChild/>
+  
+    </>
+  )
+}
+
+export default ChildComponent
+
+
+
+
+
+
+import React, { useContext } from 'react'
+import HomeDataContext from './Context/HomeDataContext'
+
+const GrandChild = () => {
+  const  context = useContext(HomeDataContext);
+  console.log(context);
+  
+  return (
+    <div>GrandChild :{context.Name} </div>
+  )
+}
+
+export default GrandChild
+
